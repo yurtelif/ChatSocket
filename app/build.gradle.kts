@@ -42,6 +42,16 @@ android {
 }
 
 dependencies {
+	implementation(libs.google.gson)
+
+	implementation(libs.androidx.room.runtime)
+	kapt(libs.androidx.room.compiler)
+
+	// Kotlin Coroutines ile Room kullanımı için
+	implementation(libs.androidx.room.ktx)
+
+	implementation(libs.okhttp)
+	implementation(libs.okhttp.sse)
 
 	// Hilt
 	implementation(libs.hilt.android)
