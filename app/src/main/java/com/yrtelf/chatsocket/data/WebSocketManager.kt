@@ -17,10 +17,7 @@ class WebSocketManager @Inject constructor() {
 	}
 
 	fun sendMessage(step: String) {
-		val json = JSONObject()
-		json.put("step", step)
-
-		webSocket?.send(json.toString())
+		webSocket?.send(step)
 	}
 
 	fun close() {

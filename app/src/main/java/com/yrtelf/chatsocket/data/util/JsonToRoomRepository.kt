@@ -20,11 +20,13 @@ class JsonToRoomRepository @Inject constructor(
 			jsonArray.forEach { json ->
 				val step = json["step"] as String
 				val type = json["type"] as String
+				val action = json["action"] as String
 				val content = json["content"] // ✅ Keep content as-is
 
 				val stepEntity = StepEntity(
 					step = step,
 					type = type,
+					action = action,
 					content = Gson().toJson(content) // ✅ Store as JSON string
 				)
 				database.stepDao().insertStep(stepEntity)
