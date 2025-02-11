@@ -5,7 +5,6 @@ import com.google.gson.Gson
 import com.yrtelf.chatsocket.data.WebSocketManager
 import com.yrtelf.chatsocket.data.dao.StepDao
 import com.yrtelf.chatsocket.data.local.AppDatabase
-import com.yrtelf.chatsocket.domain.ProcessWebSocketMessageUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -46,8 +45,4 @@ object AppModule {
 		return Gson()
 	}
 
-	@Provides
-	fun provideProcessWebSocketMessageUseCase(): ProcessWebSocketMessageUseCase {
-		return ProcessWebSocketMessageUseCase(Gson()) // Replace with actual DAO
-	}
 }

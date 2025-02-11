@@ -1,19 +1,11 @@
 package com.yrtelf.chatsocket.ui.chat
 
-data class ChatUiState(
-	val text: String,
-	val type: StepType
-)
-
-data class ChatItem(
-	val type: StepType
-)
-
 enum class StepType {
 	BUTTON,
 	TEXT,
 	IMAGE,
-	ANSWER;
+	ANSWER,
+	ERROR;
 
 	companion object {
 		fun fromString(type: String): StepType {
@@ -21,7 +13,7 @@ enum class StepType {
 				"button" -> BUTTON
 				"text" -> TEXT
 				"image" -> IMAGE
-				else -> TEXT // Default fallback
+				else -> TEXT
 			}
 		}
 	}
