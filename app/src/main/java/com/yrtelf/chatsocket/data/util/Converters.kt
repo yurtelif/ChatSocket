@@ -21,7 +21,7 @@ class Converters {
 			val mapType = object : TypeToken<Map<String, Any>>() {}.type
 			gson.fromJson<Map<String, Any>>(contentString, mapType)
 		} catch (e: JsonSyntaxException) {
-			contentString // If it fails, return as String
+			contentString
 		}
 	}
 }
