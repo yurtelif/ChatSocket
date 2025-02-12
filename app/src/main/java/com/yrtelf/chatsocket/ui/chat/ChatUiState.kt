@@ -5,7 +5,8 @@ enum class StepType {
 	TEXT,
 	IMAGE,
 	ANSWER,
-	ERROR;
+	ERROR,
+	END_CONVERSATION;
 
 	companion object {
 		fun fromString(type: String): StepType {

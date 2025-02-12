@@ -15,4 +15,6 @@ val PurpleBtnOutline = Color(0xFFE1E0EB)
 val PurpleBtnInside = Color(0xFFF4F2FC)
 val PurpleTextColor = Color(0xFF6E5CC5)
 val ChatReceiverBg = Color(0xFFF8F8FA)
+val DisableGray = Color(0xFF6D667A)
+val SocketErrorRed = Color(0xFFC90116)
 //0xFF7E74B4

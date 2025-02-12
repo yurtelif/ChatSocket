@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">ChatSocket</string>
+    <string name="ending_conversation">Görüşmeyi sonlandırdınız.</string>
+    <string name="socket_error_default">Teknir bir sorun oluştu. Lütfen sonra tekrar deneyiniz.</string>
 </resources>

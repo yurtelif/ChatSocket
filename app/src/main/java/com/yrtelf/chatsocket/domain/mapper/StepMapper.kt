@@ -1,5 +1,6 @@
 package com.yrtelf.chatsocket.domain.mapper
 
+import android.util.Log
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import com.google.gson.JsonSyntaxException
@@ -14,7 +15,7 @@ import javax.inject.Singleton
 @Singleton
 class StepMapper @Inject constructor(private val gson: Gson) {
 
-	fun mapJsonToStep(jsonMessage: String): Step {
+	fun mapJsonToStep(jsonMessage: String): Step? {
 		return try {
 			val jsonObject = gson.fromJson(jsonMessage, JsonObject::class.java)
 			val step = jsonObject["step"].asString
@@ -46,9 +47,11 @@ class StepMapper @Inject constructor(private val gson: Gson) {
 
 			Step(step, type, content, action)
 		} catch (ex: JsonSyntaxException) {
-			Step(step = "⚠️ Invalid response format", type = StepType.ERROR)
+			Log.e("WebSocketParse", "processIncomingMessage: invalid response format", )
+			null
 		} catch (ex: Exception) {
-			Step(step = "⚠️ Error parsing step", type = StepType.ERROR)
+			Log.e("WebSocketParse", "processIncomingMessage: error parsing step", )
+			null
 		}
 	}
 }

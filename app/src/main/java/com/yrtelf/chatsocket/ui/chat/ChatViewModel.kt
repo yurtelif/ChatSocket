@@ -1,11 +1,12 @@
 package com.yrtelf.chatsocket.ui.chat
 
-import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.yrtelf.chatsocket.domain.ChatWebSocketUseCase
+import com.yrtelf.chatsocket.data.WebSocketManager
+import com.yrtelf.chatsocket.domain.SendAndProcessMessageUseCase
+import com.yrtelf.chatsocket.domain.LoadJsonDataUseCase
+import com.yrtelf.chatsocket.domain.SocketConnectionUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -14,8 +15,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ChatViewModel @Inject constructor(
-	private val chatWebSocketUseCase: ChatWebSocketUseCase,
-	@ApplicationContext private val context: Context
+	private val loadJsonDataUseCase: LoadJsonDataUseCase,
+	private val socketConnectionUseCase: SocketConnectionUseCase,
+	private val sendAndProcessMessageUseCase: SendAndProcessMessageUseCase,
 ) : ViewModel() {
 
 	private val _currentStep = MutableStateFlow<List<Step>>(emptyList())
@@ -23,25 +25,26 @@ class ChatViewModel @Inject constructor(
 
 	init {
 		viewModelScope.launch {
-			chatWebSocketUseCase.loadJsonData(context)
-			chatWebSocketUseCase.connect()
-			chatWebSocketUseCase.loadStep(INITIAL_STEP)
+			loadJsonDataUseCase()
 		}
+		socketConnectionUseCase(SocketConnectionUseCase.ConnectionAction.CONNECT)
 		observeWebSocketMessages()
-
+		sendMessage(INITIAL_STEP)
 	}
 
 	private fun observeWebSocketMessages() {
 		viewModelScope.launch {
-			chatWebSocketUseCase.observeMessages().collect { step ->
-				addStep(step)
+			sendAndProcessMessageUseCase.observeMessages().collect { step ->
+				step?.let {
+					addStep(it)
+				}
 			}
 		}
 	}
 
 	private fun sendMessage(message: String) {
 		viewModelScope.launch {
-			chatWebSocketUseCase.loadStep(message)
+			sendAndProcessMessageUseCase(message)
 		}
 	}
 
@@ -51,18 +54,23 @@ class ChatViewModel @Inject constructor(
 
 	override fun onCleared() {
 		super.onCleared()
-		chatWebSocketUseCase.disconnect()
+		socketConnectionUseCase(SocketConnectionUseCase.ConnectionAction.DISCONNECT)
 	}
 
 	fun onAction(btnInfo: Button) {
-		if (btnInfo.action != END_CONVERSATION) {
+		if (btnInfo.action != END_CONVERSATION && isSocketConnected()) {
 			addStep(Step(step = btnInfo.label, isSender = true, type = StepType.ANSWER))
 			sendMessage(btnInfo.action)
 		} else {
-			chatWebSocketUseCase.disconnect()
-			// TODO: ui güncelle bittiğine dair
+			if (isSocketConnected()){
+				addStep(Step(step = "", isSender = true, type = StepType.END_CONVERSATION))
+				socketConnectionUseCase(SocketConnectionUseCase.ConnectionAction.DISCONNECT)
+			}
 		}
 	}
+
+	private fun isSocketConnected() =
+		socketConnectionUseCase.observeConnectionState().value == WebSocketManager.WebSocketState.CONNECTED
 
 	companion object ChatConstants {
 		const val INITIAL_STEP = "step_1"
